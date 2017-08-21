@@ -8,7 +8,7 @@ Currently, Matilda supports only Straits Times. More sites will be added in futu
 A sample version of this bot is currently running on Telegram, under @matilda_jk_bot. 
 
 # Credits
-Thanks to LFlare for giving me the idea.
+Thanks to LFlare for giving me the idea, and letting me take a look at his source code when I was stuck.
 
 # Contact
 You can contact me on Telegram under the user handle @fatalityx with regards to bugs.
