@@ -7,7 +7,7 @@ from commands import Commands
 from tokens import bottoken
 
 t = bottoken
-updater = Updater(token=t.token("staging"))
+updater = Updater(token=t.token("live"))
 dispatcher = updater.dispatcher
 commands = Commands
 
@@ -16,7 +16,11 @@ start_handler = CommandHandler('aboutme', commands.aboutme)
 dispatcher.add_handler(start_handler)
 cmd_handler = CommandHandler('cmd', commands.commands)
 dispatcher.add_handler(cmd_handler)
-cmd_handler = CommandHandler('st', commands.straitstimes)
+cmd_handler = CommandHandler('supported', commands.supported)
+dispatcher.add_handler(cmd_handler)
+cmd_handler = CommandHandler('st', commands.supported)
+dispatcher.add_handler(cmd_handler)
+cmd_handler = CommandHandler('today', commands.todayonline)
 dispatcher.add_handler(cmd_handler)
 
 updater.start_polling()
