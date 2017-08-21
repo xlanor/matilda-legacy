@@ -6,9 +6,9 @@ from datetime import datetime
 from dateutil import parser
 class Commands():
 	def supported (bot,update):
-		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, these are the sites currently supported by Matilda \nPlease type /cmd for more information! \n- Straits Times""", parse_mode='Markdown')
+		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, these are the sites currently supported by Matilda \nPlease type /cmd for more information! \n- Straits Times \n- TodayOnline""", parse_mode='Markdown')
 	def commands (bot,update):
-		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, this are the commands that I currently support \n - /aboutme (about the bot) \n - /cmds (command list) \n - /st <article> (Straits Times Scrapper)""", parse_mode='Markdown')
+		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, this are the commands that I currently support \n- /aboutme (about the bot) \n- /cmds (command list) \n- /st <article> (Straits Times Scrapper) \n- /today <article> (TodayOnline Scrapper)""", parse_mode='Markdown')
 	def aboutme(bot,update):
 		bot.sendMessage(chat_id=update.message.chat_id, text="Hi, I was created by my user, @fatalityx to learn more about Python, as well as scrape news articles from websites")
 
@@ -104,6 +104,7 @@ class Commands():
 		except Exception as e: print(e)
 	def todayonline(bot, update):
 		try:
+
 			url=update.message.text
 			todayurl = url[7:]
 			checktodayurl = todayurl[:27]
