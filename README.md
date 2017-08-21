@@ -4,6 +4,7 @@ Matilda is a telegram bot written in Python 3 to scrape news articles, written i
 ## Supported Sites
 * Straits Times
 * Todayonline
+* ChannelNewsAsia
 
 ## Licensing
 Matilda is licensed under the [Affero General Public License Version 3](LICENSE).
