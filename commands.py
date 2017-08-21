@@ -5,11 +5,10 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from dateutil import parser
 class Commands():
+	def supported (bot,update):
+		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, these are the sites currently supported by Matilda \nPlease type /cmd for more information! \n- Straits Times""", parse_mode='Markdown')
 	def commands (bot,update):
-		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, this are the commands that I currently support \n 
-																- /aboutme (about the bot) \n 
-																- /cmds (command list) \n 
-																- /st <article> (Straits Times Scrapper)""")
+		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, this are the commands that I currently support \n - /aboutme (about the bot) \n - /cmds (command list) \n - /st <article> (Straits Times Scrapper)""", parse_mode='Markdown')
 	def aboutme(bot,update):
 		bot.sendMessage(chat_id=update.message.chat_id, text="Hi, I was created by my user, @fatalityx to learn more about Python, as well as scrape news articles from websites")
 
@@ -19,7 +18,6 @@ class Commands():
 			url=update.message.text
 			sturl = url[4:]
 			checksturl = sturl[:28]
-			print(checksturl)
 			if checksturl != "http://www.straitstimes.com/":
 				bot.sendMessage(chat_id=update.message.chat_id, text="""Please enter a valid url. For example, http://www.straitstimes.com/<article>""",parse_mode='Markdown')
 
@@ -31,7 +29,6 @@ class Commands():
 					if (result.status_code >= 400):
 						bot.sendMessage(chat_id=update.message.chat_id, text="""This story does not exist!""",parse_mode='Markdown')
 					else:
-						print('hello')
 						headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 						r = requests.get(sturl, headers=headers)
 						c = r.content
@@ -73,6 +70,111 @@ class Commands():
 							a = div.findAll('span')
 							for link in a:
 								link.decompose()
+							p = div.findAll('p',{"class": None})
+							for para in p:
+								if para.text is not "":
+									bodyobject.append(para.text)
+									bodyobject.append("\n")
+									bodyobject.append("\n")
+						str1 = ''.join(bodyobject)
+						result = 0
+						for char in str1:
+							result +=1
+						try:
+							if (result) > 4096:
+								n = 4000
+								checklist=["false"]
+								while "false" in checklist:
+									del checklist[:]
+									n = n-1
+									msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
+									for msg in msglist:
+										lastchar = (msg.strip()[-1])
+										if msg[-1] not in string.whitespace:
+											checklist.append("false")
+										else:
+											checklist.append("true")
+								msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
+								for msg in msglist:
+									bot.sendMessage(chat_id=update.message.chat_id, text=msg, parse_mode='Markdown')
+							else:
+								bot.sendMessage(chat_id=update.message.chat_id, text=str1, parse_mode='Markdown')
+						except Exception as e: print(e)					
+				except Exception as e: print(e)
+		except Exception as e: print(e)
+	def todayonline(bot, update):
+		try:
+			url=update.message.text
+			todayurl = url[7:]
+			checktodayurl = todayurl[:27]
+			if checktodayurl != "http://www.todayonline.com/":
+				bot.sendMessage(chat_id=update.message.chat_id, text="""Please enter a valid url. For example, http://www.todayonline.com/<article>""",parse_mode='Markdown')
+
+			else:
+				try:
+					headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+					result = requests.get(todayurl,headers=headers)
+					print(result.status_code)
+					if (result.status_code >= 400):
+						bot.sendMessage(chat_id=update.message.chat_id, text="""This story does not exist!""",parse_mode='Markdown')
+					else:
+						headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+						r = requests.get(todayurl, headers=headers)
+						c = r.content
+						soup = BeautifulSoup(c,"html.parser")
+						mydivs = soup.findAll("div", { "class" : "content" })
+						titlediv = soup.findAll("meta", {"property" : "og:title"})
+						publishdiv = soup.findAll("div", {"class" : "authoring full-date"})
+						updatediv = soup.findAll("meta", {"property" : "article:modified_time"})
+						bodyobject = []
+						publishedobject = []
+						modifiedobject = []
+						dateval = soup.findAll("span", {"class" : "date-value"})
+						dateobj = []
+						for date in dateval:
+							dt = parser.parse(date.text)
+							dateobj.append(dt)
+						if len(dateobj) > 1:
+							pubdate = min(dateobj)
+							moddate = max(dateobj)
+						else:
+							pubdate = min(dateobj)
+						for title in titlediv:
+							articletitle = title['content']
+							bodyobject.append("*")
+							bodyobject.append(articletitle)
+							bodyobject.append("*")
+							bodyobject.append("\n")
+							bodyobject.append("\n")
+						for postdate in publishdiv:
+							datelbl = postdate.findAll("span", {"class" : "date-label"})
+							for lbl in datelbl:
+								print(lbl.text)
+								if "Published:" in lbl.text:
+									publishedobject.append('Published at: ')
+									publishedobject.append(pubdate.strftime("%B %d, %Y %H:%M"))
+								else:
+									modifiedobject.append('Updated at: ')
+									modifiedobject.append(moddate.strftime("%B %d, %Y %H:%M"))
+						bodyobject.append("_")
+						bodyobject.extend(publishedobject)
+						bodyobject.append("_")
+						bodyobject.append("\n")
+						bodyobject.append("_")
+						bodyobject.extend(modifiedobject)
+						bodyobject.append("_")
+						bodyobject.append("\n")
+						bodyobject.append("\n")
+						for div in mydivs:
+							blockquote = div.findAll('blockquote')
+							for b in blockquote:
+								b.decompose()
+							a = div.findAll('span')
+							for link in a:
+								link.decompose()
+							s = div.findAll('sup')
+							for sup in s:
+								sup.decompose()
 							p = div.findAll('p',{"class": None})
 							for para in p:
 								if para.text is not "":
