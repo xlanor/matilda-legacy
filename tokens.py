@@ -4,6 +4,6 @@
 class bottoken():
 	def token(x):
 		if x == "staging":
-			return ""
+			return "<staging-token>"
 		elif x == "live":
-			return ""
+			return "<live-token>"
