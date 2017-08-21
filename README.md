@@ -1,5 +1,5 @@
 # Matilda
-Matilda is a telegram bot written in Python 3 to scrape news articles, written in order to allow me to get a better understanding of Python. This bot is purely for educational purposes only.
+Matilda is a telegram bot written in Python 3 to scrape news articles, written in order to allow me to get a better understanding of Python. This bot is purely for educational purposes.
 
 ## Supported Sites
 * Straits Times
