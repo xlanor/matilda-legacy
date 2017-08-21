@@ -22,5 +22,7 @@ cmd_handler = CommandHandler('st', commands.supported)
 dispatcher.add_handler(cmd_handler)
 cmd_handler = CommandHandler('today', commands.todayonline)
 dispatcher.add_handler(cmd_handler)
+cmd_handler = CommandHandler('cna', commands.cna)
+dispatcher.add_handler(cmd_handler)
 
 updater.start_polling()
