@@ -10,9 +10,9 @@ import html
 
 class Commands():
 	def supported (bot,update):
-		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, these are the sites currently supported by Matilda \nPlease type /cmd for more information! \n- Straits Times \n- TodayOnline \n- CNA""", parse_mode='Markdown')
+		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, these are the sites currently supported by Matilda \nPlease type /cmd for more information! \n- Straits Times \n- TodayOnline \n- CNA \n- Mothership""", parse_mode='Markdown')
 	def commands (bot,update):
-		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, this are the commands that I currently support \n- /aboutme (about the bot) \n- /cmds (command list) \n- /st <article> (Straits Times Scrapper) \n- /today <article> (TodayOnline Scrapper) \n- /cna <article> (Channel News Asia Scrapper)""", parse_mode='Markdown')
+		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, this are the commands that I currently support \n- /aboutme (about the bot) \n- /cmd (command list) \n- /st <article> (Straits Times Scraper) \n- /today <article> (TodayOnline Scraper) \n- /cna <article> (Channel News Asia Scraper) \n- /laobu <article> (Mothership.sg Scraper)""", parse_mode='Markdown')
 	def aboutme(bot,update):
 		bot.sendMessage(chat_id=update.message.chat_id, text="Hi, I was created by my user, @fatalityx to learn more about Python, as well as scrape news articles from websites")
 
@@ -292,6 +292,9 @@ class Commands():
 								if para.text is not "":
 									if para.text.strip() is not "":
 										parastring = escape_markdown(para.text)
+										#strip1 = parastring.replace("*","")
+										#strip2 = strip1.replace("_","")
+										#strip3 = strip2.replace("`","")
 										bodyobject.append(parastring)
 										bodyobject.append("\n")
 										bodyobject.append("\n")
@@ -321,4 +324,259 @@ class Commands():
 								bot.sendMessage(chat_id=update.message.chat_id, text=str1, parse_mode='Markdown')
 						except Exception as e: print(e)					
 				except Exception as e: print(e)
+		except Exception as e: print(e)
+	def laobu(bot, update):
+		try:
+
+			url=update.message.text
+			msurl = url[7:]
+			checkmsurl = msurl[:22]
+			if checkmsurl != "https://mothership.sg/":
+				bot.sendMessage(chat_id=update.message.chat_id, text="""Please enter a valid url. For example, https://mothership.sg/<article>""",parse_mode='Markdown')
+
+			else:
+				try:
+					headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+					result = requests.get(msurl,headers=headers)
+					print(result.status_code)
+					if (result.status_code >= 400):
+						bot.sendMessage(chat_id=update.message.chat_id, text="""This story does not exist!""",parse_mode='Markdown')
+					else:
+						headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+						r = requests.get(msurl, headers=headers)
+						c = r.content
+						soup = BeautifulSoup(c,"html.parser")
+						mydivs = soup.findAll("div", { "class" : "content-article-wrap" })
+						subtitlediv = soup.findAll("div", { "class" : "article original" })
+						titlediv = soup.findAll("meta", {"property" : "og:title"})
+						bodyobject = []
+						publishedobject = []
+						modifiedobject = []
+						for title in titlediv:
+							bodyobject.append("*")
+							bodyobject.append(title['content'])
+							bodyobject.append("*")
+							bodyobject.append("\n")
+						for sub in subtitlediv:
+							header = sub.findAll('div',{"class":"header"})
+							bar= sub.findAll('div',{"class":"side-bar"})
+							for side in bar:
+								side.decompose()
+							adv = sub.findAll('div',{"class":"related-stories"})
+							for ad in adv:
+								ad.decompose()
+							rel = sub.findAll('div',{"class":"related-articles"})
+							for re in rel:
+								re.decompose()
+							for p in header:
+								pclass = p.findAll('p',{"class":"subtitle"})
+								for pc in pclass:
+									bodyobject.append(pc.text)
+									bodyobject.append("\n")
+									bodyobject.append("\n")
+							for date in header:
+								dclass = date.findAll('span',{"class":"publish-date"})
+								for d in dclass:
+									publishedobject.append("Published: ")
+									publishedobject.append(d.text)
+						bodyobject.append("_")
+						bodyobject.extend(publishedobject)
+						bodyobject.append("_")
+						bodyobject.append("\n")
+						bodyobject.append("\n")
+						for div in mydivs:
+							adv = div.findAll('div')
+							for ad in adv:
+								ad.decompose()
+							fig = div.findAll('figure')
+							for f in fig:
+								f.decompose()
+							htmltext = str(div)
+							newhtmltext = htmltext[33:]
+							h = html2text.HTML2Text()
+							h.ignore_links = True
+							handledtext = h.handle(newhtmltext)
+							h3 = div.findAll('h3')
+							if len(h3) > 0:
+								for each in h3:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h3.replace_with(replacement)
+							h4 = div.findAll('h4')
+							if len(h4) > 0:
+								for each in h4:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h4.replace_with(replacement)
+							h5 = div.findAll('h5')
+							if len(h5) > 0:
+								for each in h5:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h5.replace_with(replacement)
+							h1 = div.findAll('h1')
+							if len(h1) > 0:
+								for each in h1:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h1.replace_with(replacement)
+							h2 = div.findAll('h2')
+							if len(h2) > 0:
+								for each in h2:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h2.replace_with(replacement)
+							bodyobject.append(div.text)
+							bodyobject.append("\n")
+							bodyobject.append("\n")
+						str1 = ''.join(bodyobject)
+						result = 0
+						for char in str1:
+							result +=1
+						
+						if (result) > 4096:
+							n = 4000
+							checklist=["false"]
+							while "false" in checklist:
+								del checklist[:]
+								n = n-1
+								msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
+								for msg in msglist:
+									lastchar = (msg.strip()[-1])
+									if msg[-1] not in string.whitespace:
+										checklist.append("false")
+									else:
+										checklist.append("true")
+							msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
+							for msg in msglist:
+								bot.sendMessage(chat_id=update.message.chat_id, text=msg, parse_mode='Markdown')
+						else:
+							bot.sendMessage(chat_id=update.message.chat_id, text=str1, parse_mode= 'Markdown')
+				except:
+					headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+					result = requests.get(msurl,headers=headers)
+					print(result.status_code)
+					if (result.status_code >= 400):
+						bot.sendMessage(chat_id=update.message.chat_id, text="""This story does not exist!""",parse_mode='Markdown')
+					else:
+						headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+						r = requests.get(msurl, headers=headers)
+						c = r.content
+						soup = BeautifulSoup(c,"html.parser")
+						mydivs = soup.findAll("div", { "class" : "content-article-wrap" })
+						subtitlediv = soup.findAll("div", { "class" : "article original" })
+						titlediv = soup.findAll("meta", {"property" : "og:title"})
+						bodyobject = []
+						publishedobject = []
+						modifiedobject = []
+						for title in titlediv:
+							bodyobject.append("*")
+							bodyobject.append(title['content'])
+							bodyobject.append("*")
+							bodyobject.append("\n")
+						for sub in subtitlediv:
+							header = sub.findAll('div',{"class":"header"})
+							bar= sub.findAll('div',{"class":"side-bar"})
+							for side in bar:
+								side.decompose()
+							adv = sub.findAll('div',{"class":"related-stories"})
+							for ad in adv:
+								ad.decompose()
+							rel = sub.findAll('div',{"class":"related-articles"})
+							for re in rel:
+								re.decompose()
+							for p in header:
+								pclass = p.findAll('p',{"class":"subtitle"})
+								for pc in pclass:
+									bodyobject.append(pc.text)
+									bodyobject.append("\n")
+									bodyobject.append("\n")
+							for date in header:
+								dclass = date.findAll('span',{"class":"publish-date"})
+								for d in dclass:
+									publishedobject.append("Published: ")
+									publishedobject.append(d.text)
+						bodyobject.append("_")
+						bodyobject.extend(publishedobject)
+						bodyobject.append("_")
+						bodyobject.append("\n")
+						bodyobject.append("\n")
+						for div in mydivs:
+							adv = div.findAll('div')
+							for ad in adv:
+								ad.decompose()
+							fig = div.findAll('figure')
+							for f in fig:
+								f.decompose()
+							htmltext = str(div)
+							newhtmltext = htmltext[33:]
+							h = html2text.HTML2Text()
+							h.ignore_links = True
+							handledtext = h.handle(newhtmltext)
+							h3 = div.findAll('h3')
+							if len(h3) > 0:
+								for each in h3:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h3.replace_with(replacement)
+							h4 = div.findAll('h4')
+							if len(h4) > 0:
+								for each in h4:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h4.replace_with(replacement)
+							h5 = div.findAll('h5')
+							if len(h5) > 0:
+								for each in h5:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h5.replace_with(replacement)
+							h1 = div.findAll('h1')
+							if len(h1) > 0:
+								for each in h1:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h1.replace_with(replacement)
+							h2 = div.findAll('h2')
+							if len(h2) > 0:
+								for each in h2:
+									text = each.text
+									replacement = "*"+text+"*"
+									print(replacement)
+									div.h2.replace_with(replacement)
+							bodyobject.append(escape_markdown(div.text))
+							bodyobject.append("\n")
+							bodyobject.append("\n")
+						str1 = ''.join(bodyobject)
+						result = 0
+						for char in str1:
+							result +=1
+						
+						if (result) > 4096:
+							n = 4000
+							checklist=["false"]
+							while "false" in checklist:
+								del checklist[:]
+								n = n-1
+								msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
+								for msg in msglist:
+									lastchar = (msg.strip()[-1])
+									if msg[-1] not in string.whitespace:
+										checklist.append("false")
+									else:
+										checklist.append("true")
+							msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
+							for msg in msglist:
+								bot.sendMessage(chat_id=update.message.chat_id, text=msg, parse_mode='Markdown')
+						else:
+							bot.sendMessage(chat_id=update.message.chat_id, text=str1, parse_mode= 'Markdown')
 		except Exception as e: print(e)
