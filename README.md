@@ -26,8 +26,8 @@ You can contact me on Telegram under the user handle @fatalityx with regards to 
 ## Commands
 * /cmd (full command list)
 * /aboutme (about Matilda)
-* * /supported (supported sites)
-* * * /cna <article> (scrapes CNA Articles)
+* /supported (supported sites)
+* /cna <article> (scrapes CNA Articles)
 * /st <article>  (scrapes straits times article)
 * /today <article> (scrapes Today Online Articles)
 
