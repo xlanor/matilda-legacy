@@ -23,6 +23,18 @@ A sample version of this bot is currently running on Telegram, under @matilda_jk
 ## Contact
 You can contact me on Telegram under the user handle @fatalityx with regards to bugs.
 
+## Commands
+* /cmd (full command list)
+* /aboutme (about Matilda)
+* * /supported (supported sites)
+* * * /cna <article> (scrapes CNA Articles)
+* /st <article>  (scrapes straits times article)
+* /today <article> (scrapes Today Online Articles)
+
+Currently under development
+* /laobu <article> (mothership)
+* Grabbing of latest articles from RSS feed
+
 ## Usage
 Install the following python libraries
 * python-telegram-bot
