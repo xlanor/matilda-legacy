@@ -22,3 +22,20 @@ A sample version of this bot is currently running on Telegram, under @matilda_jk
 
 ## Contact
 You can contact me on Telegram under the user handle @fatalityx with regards to bugs.
+
+## Usage
+Install the following python libraries* python-telegram-bot
+* Beautiful Soup 4
+* Requests
+* Python String Utilities
+* dateutil
+
+Update token.py with your bot's api token
+
+Run python3 matilda.py
+
+
+If you are running Matilda on linux, you may also want to use this command to ensure that Matilda keeps running after you exit the terminal.
+
+
+sudo nohup python3 matilda.py > /home/matilda-live/error.log 2>&1 &
