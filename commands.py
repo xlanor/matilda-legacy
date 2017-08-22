@@ -4,6 +4,10 @@ import string
 from bs4 import BeautifulSoup
 from datetime import datetime
 from dateutil import parser
+from telegram.utils.helpers import escape_html, escape_markdown
+import html2text
+import html
+
 class Commands():
 	def supported (bot,update):
 		bot.sendMessage(chat_id=update.message.chat_id, text="""Hi, these are the sites currently supported by Matilda \nPlease type /cmd for more information! \n- Straits Times \n- TodayOnline \n- CNA""", parse_mode='Markdown')
@@ -73,7 +77,8 @@ class Commands():
 							p = div.findAll('p',{"class": None})
 							for para in p:
 								if para.text is not "":
-									bodyobject.append(para.text)
+									parastring = escape_markdown(para.text)
+									bodyobject.append(parastring)
 									bodyobject.append("\n")
 									bodyobject.append("\n")
 						str1 = ''.join(bodyobject)
@@ -179,7 +184,8 @@ class Commands():
 							p = div.findAll('p',{"class": None})
 							for para in p:
 								if para.text is not "":
-									bodyobject.append(para.text)
+									parastring = escape_markdown(para.text)
+									bodyobject.append(parastring)
 									bodyobject.append("\n")
 									bodyobject.append("\n")
 						str1 = ''.join(bodyobject)
@@ -285,7 +291,8 @@ class Commands():
 							for para in p:
 								if para.text is not "":
 									if para.text.strip() is not "":
-										bodyobject.append(para.text)
+										parastring = escape_markdown(para.text)
+										bodyobject.append(parastring)
 										bodyobject.append("\n")
 										bodyobject.append("\n")
 						str1 = ''.join(bodyobject)
@@ -305,11 +312,12 @@ class Commands():
 										if msg[-1] not in string.whitespace:
 											checklist.append("false")
 										else:
-											checklist.append("true")
+											checklist.append("true")	
 								msglist = [str1[i:i+n] for i in range(0, len(str1), n)]
 								for msg in msglist:
 									bot.sendMessage(chat_id=update.message.chat_id, text=msg, parse_mode='Markdown')
 							else:
+								print(str1)
 								bot.sendMessage(chat_id=update.message.chat_id, text=str1, parse_mode='Markdown')
 						except Exception as e: print(e)					
 				except Exception as e: print(e)
