@@ -22,7 +22,7 @@ A sample version of this bot is currently running on Telegram, under @matilda_jk
 * [Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot) for making a wonderful wrapper, and having an excellent community who are willing to devote time to assist others.
 
 ## Contact
-You can contact me on Telegram under the user handle @fatalityx with regards to bugs.
+You can open an issue here to contact me regarding bugs.
 
 ## Commands
 * /cmd (full command list)
